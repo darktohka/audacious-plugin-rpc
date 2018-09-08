@@ -11,7 +11,7 @@
 #include "discord_rpc.h"
 
 #define EXPORT __attribute__((visibility("default")))
-#define APPLICATION_ID "fill_this"
+#define APPLICATION_ID "484736379171897344"
 
 class RPCPlugin : public GeneralPlugin {
 
