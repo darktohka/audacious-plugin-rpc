@@ -44,40 +44,40 @@ void update_presence() {
 }
 
 void init_presence() {
-	memset(&presence, 0, sizeof(presence));
-	presence.state = "Initialized";
-	presence.details = "Waiting...";
-	presence.largeImageKey = "logo";
+    memset(&presence, 0, sizeof(presence));
+    presence.state = "Initialized";
+    presence.details = "Waiting...";
+    presence.largeImageKey = "logo";
     presence.smallImageKey = "stop";
     update_presence();
 }
 
 void cleanup_discord() {
-	Discord_ClearPresence();
+    Discord_ClearPresence();
     Discord_Shutdown();
 }
 
 void update_title_presence(void*, void*) {
-	if (!aud_drct_get_ready()) {
-		return;
-	}
+    if (!aud_drct_get_ready()) {
+        return;
+    }
 
-	if (aud_drct_get_playing()) {
-		bool paused = aud_drct_get_paused();
-		Tuple tuple = aud_drct_get_tuple();
-		std::string artist(tuple.get_str(Tuple::Artist));
-		std::string title(tuple.get_str(Tuple::Title));
-		fullTitle = (artist + " - " + title).substr(0, 127);
+    if (aud_drct_get_playing()) {
+        bool paused = aud_drct_get_paused();
+        Tuple tuple = aud_drct_get_tuple();
+        std::string artist(tuple.get_str(Tuple::Artist));
+        std::string title(tuple.get_str(Tuple::Title));
+        fullTitle = (artist + " - " + title).substr(0, 127);
 
-		presence.details = fullTitle.c_str();
-		presence.state = paused ? "Paused" : "Listening";
-		presence.smallImageKey = paused ? "pause" : "play";
-	} else {
-		presence.state = "Stopped";
-		presence.smallImageKey = "stop";
-	}
+        presence.details = fullTitle.c_str();
+        presence.state = paused ? "Paused" : "Listening";
+        presence.smallImageKey = paused ? "pause" : "play";
+    } else {
+        presence.state = "Stopped";
+        presence.smallImageKey = "stop";
+    }
 
-	update_presence();
+    update_presence();
 }
 
 bool RPCPlugin::init() {
