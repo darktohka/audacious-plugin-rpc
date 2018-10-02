@@ -7,19 +7,28 @@
 #include <libaudcore/hook.h>
 #include <libaudcore/audstrings.h>
 #include <libaudcore/tuple.h>
+#include <libaudcore/preferences.h>
+#include <libaudcore/runtime.h>
 
 #include "discord_rpc.h"
 
 #define EXPORT __attribute__((visibility("default")))
 #define APPLICATION_ID "484736379171897344"
 
+static const char *SETTING_EXTRA_TEXT = "extra_text";
+
 class RPCPlugin : public GeneralPlugin {
 
 public:
+    static const char about[];
+    static const PreferencesWidget widgets[];
+    static const PluginPreferences prefs;
+
     static constexpr PluginInfo info = {
         N_("Discord RPC"),
         "audacious-plugin-rpc",
-        nullptr,
+        about,
+        &prefs
     };
 
     constexpr RPCPlugin() : GeneralPlugin (info, false) {}
@@ -33,6 +42,7 @@ EXPORT RPCPlugin aud_plugin_instance;
 DiscordEventHandlers handlers;
 DiscordRichPresence presence;
 std::string fullTitle;
+std::string playingStatus;
 
 void init_discord() {
     memset(&handlers, 0, sizeof(handlers));
@@ -57,7 +67,7 @@ void cleanup_discord() {
     Discord_Shutdown();
 }
 
-void update_title_presence(void*, void*) {
+void title_changed() {
     if (!aud_drct_get_ready()) {
         return;
     }
@@ -68,16 +78,25 @@ void update_title_presence(void*, void*) {
         std::string artist(tuple.get_str(Tuple::Artist));
         std::string title(tuple.get_str(Tuple::Title));
         fullTitle = (artist + " - " + title).substr(0, 127);
+        playingStatus = paused ? "Paused" : "Listening";
 
         presence.details = fullTitle.c_str();
-        presence.state = paused ? "Paused" : "Listening";
         presence.smallImageKey = paused ? "pause" : "play";
     } else {
+        playingStatus = "Stopped";
         presence.state = "Stopped";
         presence.smallImageKey = "stop";
     }
 
+    std::string extraText(aud_get_str("audacious-plugin-rpc", SETTING_EXTRA_TEXT));
+    playingStatus = playingStatus + extraText;
+
+    presence.state = playingStatus.c_str();
     update_presence();
+}
+
+void update_title_presence(void*, void*) {
+    title_changed();
 }
 
 bool RPCPlugin::init() {
@@ -101,3 +120,15 @@ void RPCPlugin::cleanup() {
     hook_dissociate("title change", update_title_presence);
     cleanup_discord();
 }
+
+const char RPCPlugin::about[] = N_("Discord RPC music status plugin\n\nWritten by: Derzsi Daniel <daniel@tohka.us>");
+
+const PreferencesWidget RPCPlugin::widgets[] =
+{
+  WidgetEntry(
+      N_("Extra status text:"),
+      WidgetString("audacious-plugin-rpc", SETTING_EXTRA_TEXT, title_changed)
+  )
+};
+
+const PluginPreferences RPCPlugin::prefs = {{ widgets }};
