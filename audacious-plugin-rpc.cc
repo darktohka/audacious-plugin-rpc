@@ -99,6 +99,10 @@ void update_title_presence(void*, void*) {
     title_changed();
 }
 
+void open_github() {
+   system("xdg-open https://github.com/darktohka/audacious-plugin-rpc");
+}
+
 bool RPCPlugin::init() {
     init_discord();
     init_presence();
@@ -128,6 +132,10 @@ const PreferencesWidget RPCPlugin::widgets[] =
   WidgetEntry(
       N_("Extra status text:"),
       WidgetString("audacious-plugin-rpc", SETTING_EXTRA_TEXT, title_changed)
+  ),
+  WidgetButton(
+      N_("Fork on GitHub"),
+      {open_github}
   )
 };
 
