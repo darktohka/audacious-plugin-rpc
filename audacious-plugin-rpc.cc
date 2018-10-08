@@ -89,7 +89,7 @@ void title_changed() {
     }
 
     std::string extraText(aud_get_str("audacious-plugin-rpc", SETTING_EXTRA_TEXT));
-    playingStatus = (playingStatus + extraText).substr(0, 127);
+    playingStatus = (playingStatus + " " + extraText).substr(0, 127);
 
     presence.state = playingStatus.c_str();
     update_presence();
