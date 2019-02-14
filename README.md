@@ -7,8 +7,8 @@ A Discord Rich Presence plugin for the Audacious music player!
 3. Open Audacious, go to Settings > Plugins and enable the `Discord RPC` plugin.
 
 # Screenshots
-![Screenshot 1](https://i.imgur.com/Epokoo1.png)
-![Screenshot 2](https://i.imgur.com/agfdo0Z.png)
+![Screenshot 1](https://i.imgur.com/fmSBkpt.png)
+![Screenshot 2](https://i.imgur.com/INHK64d.png)
 
 # Compilation
 1. Clone the repository.
