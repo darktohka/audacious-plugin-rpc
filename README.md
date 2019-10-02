@@ -16,7 +16,8 @@ A Discord Rich Presence plugin for the Audacious music player!
 3. Compile the discord-rpc library using the CMake steps found in the discord-rpc README.
 4. Copy `libdiscord-rpc.a` into the `audacious-plugin-rpc` folder.
 5. Compile and install the plugin:
-```mkdir build
+```
+mkdir build
 cd build
 cmake ..
 make install
