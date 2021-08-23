@@ -75,9 +75,15 @@ void title_changed() {
     if (aud_drct_get_playing()) {
         bool paused = aud_drct_get_paused();
         Tuple tuple = aud_drct_get_tuple();
-        std::string artist(tuple.get_str(Tuple::Artist));
+        String artist = tuple.get_str(Tuple::Artist);
         std::string title(tuple.get_str(Tuple::Title));
-        fullTitle = (artist + " - " + title).substr(0, 127);
+
+        if (artist) {
+            fullTitle = (std::string(artist) + " - " + title).substr(0, 127);
+        } else {
+            fullTitle = title.substr(0, 127);
+        }
+
         playingStatus = paused ? "Paused" : "Listening";
 
         presence.details = fullTitle.c_str();
