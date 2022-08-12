@@ -1,0 +1,50 @@
+name: Build audacious-plugin-rpc
+
+on: [push, workflow_dispatch, repository_dispatch]
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    name: Build for Ubuntu 20.04
+    steps:
+      - name: Set up ccache
+        uses: hendrikmuhs/ccache-action@v1.2.2
+        with:
+          key: ccache
+      - name: Set up Clang
+        uses: egor-tensin/setup-clang@v1
+        with:
+          version: 14
+          platform: x64      
+      - name: Enable Clang
+        shell: bash
+        run: |
+          echo "CC=clang" >> $GITHUB_ENV && \
+          echo "CXX=clang++" >> $GITHUB_ENV
+      - name: Install Audacious
+        shell: bash
+        run: |
+          sudo apt-get -y update && sudo apt-get install -y audacious-dev
+      - name: Checkout code  
+        uses: actions/checkout@v3
+      - name: Configure project
+        shell: bash
+        run: |
+          cmake \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_C_FLAGS="-O3 -flto" -DCMAKE_CXX_FLAGS="-O3 -flto" \
+            .
+      - name: Build project
+        shell: bash
+        run: |
+          cmake --build . --parallel 2 --config Release      
+      - name: Strip symbols
+        shell: bash
+        run: |
+          strip -s libaudacious-plugin-rpc.so
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: libaudacious-plugin-rpc
+          path: libaudacious-plugin-rpc.so

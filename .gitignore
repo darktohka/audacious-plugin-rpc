@@ -3,5 +3,7 @@ cmake_install.cmake
 CMakeFiles
 Makefile
 
+build
+
 *.so
 *.a

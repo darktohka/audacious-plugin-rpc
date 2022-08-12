@@ -10,7 +10,7 @@
 #include <libaudcore/preferences.h>
 #include <libaudcore/runtime.h>
 
-#include "discord_rpc.h"
+#include <discord_rpc.h>
 
 #define EXPORT __attribute__((visibility("default")))
 #define APPLICATION_ID "484736379171897344"
